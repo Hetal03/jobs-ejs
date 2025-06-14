@@ -56,29 +56,7 @@ app.get("/", (req, res) => {
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 
-/*
-// ✅ secretWord handling
-app.get("/secretWord", (req, res) => {
-  if (!req.session.secretWord) {
-    req.session.secretWord = "syzygy";
-  }
-  res.render("secretWord", { secretWord: req.session.secretWord });
-});
 
-app.post("/secretWord", (req, res) => {
-  const word = req.body.secretWord?.trim();
-
-  if (word && word[0].toUpperCase() === "P") {
-    req.flash("error", "Words that start with 'P' are not allowed.");
-  } else if (word) {
-    req.session.secretWord = word;
-    req.flash("info", "The secret word was changed.");
-  } else {
-    req.flash("error", "Please enter a valid secret word.");
-  }
-
-  res.redirect("/secretWord");
-});  */
 
 const auth = require("./middleware/auth"); 
 const secretWordRouter = require("./routes/secretWord");
