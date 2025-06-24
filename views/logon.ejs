@@ -19,6 +19,8 @@
     <input type="password" name="password" />
   </div>
   <div>
+      <!-- CSRF token -->
+  <input type="hidden" name="_csrf" value="<%= _csrf %>">
     <button>Logon</button>
     <a href="/">
       <button type="button">Cancel</button>
