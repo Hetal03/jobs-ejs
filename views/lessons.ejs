@@ -15,6 +15,7 @@
             <th>Title</th>
             <th>Description</th>
             <th>Tags</th>
+            <th>Published</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -24,6 +25,7 @@
               <td><%= lesson.title %></td>
               <td><%= lesson.description %></td>
               <td><%= lesson.tags.join(", ") %></td>
+              <td><%= lesson.isPublished ? '✅ Yes' : '❌ No' %></td>
               <td>
                 <a href="/lessons/edit/<%= lesson._id %>" class="btn btn-sm btn-warning me-2">Edit</a>
                 

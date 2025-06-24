@@ -16,6 +16,11 @@ const lessonSchema = new mongoose.Schema({
     required: true,
   },
 
+  isPublished: {
+      type: Boolean,
+      default: false, // <-- NEW FIELD
+    },
+
   comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -23,6 +28,7 @@ const lessonSchema = new mongoose.Schema({
       },
     ],
 
+    
 
 }, { timestamps: true });
 

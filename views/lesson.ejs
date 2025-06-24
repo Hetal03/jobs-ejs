@@ -41,6 +41,18 @@
       />
     </div>
 
+
+    <div class="mb-3">
+  <label class="form-check-label" for="isPublished">Publish Lesson?</label>
+  <input
+    class="form-check-input"
+    type="checkbox"
+    id="isPublished"
+    name="isPublished"
+    <%= lesson && lesson.isPublished ? "checked" : "" %>
+  >
+</div>
+
     <div class="d-flex justify-content-between">
       <button type="submit" class="btn btn-primary">
         <%= lesson ? "Update" : "Create" %>

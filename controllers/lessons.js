@@ -17,6 +17,7 @@ exports.createLesson = async (req, res) => {
       description,
       tags: tags?.split(",").map(tag => tag.trim()),
       createdBy: req.user._id,
+      isPublished: req.body.isPublished === 'on'
     });
     req.flash("info", "Lesson created successfully!");
     res.redirect("/lessons");
@@ -32,15 +33,43 @@ exports.renderEditForm = async (req, res) => {
   res.render("lesson", { lesson });
 };
 
-exports.updateLesson = async (req, res) => {
+/*exports.updateLesson = async (req, res) => {
   const { title, description, tags } = req.body;
   await Lesson.updateOne(
     { _id: req.params.id, createdBy: req.user._id },
     { title, description, tags: tags?.split(",").map(tag => tag.trim()) }
+    lesson.isPublished = req.body.isPublished === 'on';
   );
   req.flash("info", "Lesson updated!");
   res.redirect("/lessons");
+}; */
+
+exports.updateLesson = async (req, res) => {
+  try {
+    const { title, description, tags } = req.body;
+
+    const lesson = await Lesson.findOne({ _id: req.params.id, createdBy: req.user._id });
+    if (!lesson) {
+      req.flash("errors", ["Lesson not found"]);
+      return res.redirect("/lessons");
+    }
+
+    lesson.title = title;
+    lesson.description = description;
+    lesson.tags = tags?.split(",").map(tag => tag.trim());
+    lesson.isPublished = req.body.isPublished === 'on'; // ✅ Fix: update isPublished too
+
+    await lesson.save();
+
+    req.flash("info", "Lesson updated!");
+    res.redirect("/lessons");
+  } catch (err) {
+    req.flash("errors", [err.message]);
+    res.redirect("/lessons");
+  }
 };
+
+
 
 exports.deleteLesson = async (req, res) => {
   await Lesson.deleteOne({ _id: req.params.id, createdBy: req.user._id });
