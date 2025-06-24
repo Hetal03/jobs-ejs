@@ -1,0 +1,21 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+  <h2>Explore Published Lessons</h2>
+
+  <% if (lessons.length === 0) { %>
+    <p>No lessons published yet.</p>
+  <% } else { %>
+    <ul class="list-group">
+      <% lessons.forEach(lesson => { %>
+        <li class="list-group-item">
+          <a href="/lessons/view/<%= lesson._id %>"><%= lesson.title %></a>
+          <span class="badge bg-success float-end">Published</span>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
+
+<%- include("partials/footer.ejs") %>
