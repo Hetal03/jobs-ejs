@@ -1,0 +1,45 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Lessons</h2>
+    <a href="/lessons/new" class="btn btn-success">➕ Add New Lesson</a>
+  </div>
+
+  <% if (lessons && lessons.length > 0) { %>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Tags</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% lessons.forEach(lesson => { %>
+            <tr>
+              <td><%= lesson.title %></td>
+              <td><%= lesson.description %></td>
+              <td><%= lesson.tags.join(", ") %></td>
+              <td>
+                <a href="/lessons/edit/<%= lesson._id %>" class="btn btn-sm btn-warning me-2">Edit</a>
+                
+                <form method="POST" action="/lessons/delete/<%= lesson._id %>" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= _csrf %>">
+                  <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this lesson?');">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="alert alert-info">No lessons found. Start by adding a new one!</div>
+  <% } %>
+</div>
+
+<%- include("partials/footer.ejs") %>

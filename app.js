@@ -7,6 +7,9 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const jobsRouter = require("./routes/jobs");
+const lessonsRouter = require("./routes/lessons");
+
+const { isLoggedIn } = require("./middleware/auth");
 
 const helmet = require("helmet");
 const xss = require("xss-clean");
@@ -83,6 +86,7 @@ app.use(flash());
 // Locals middleware
 app.use(require("./middleware/storeLocals"));
 
+
 // Passport setup
 const passport = require("passport");
 const passportInit = require("./passport/passportInit");
@@ -103,11 +107,29 @@ app.get("/", (req, res) => {
 
 app.use("/sessions", require("./routes/sessionRoutes"));
 
-const auth = require("./middleware/auth");
+//const auth = require("./middleware/auth");
 const secretWordRouter = require("./routes/secretWord");
-app.use("/secretWord", auth, secretWordRouter);
+//app.use("/secretWord", auth, secretWordRouter);
+app.use("/secretWord", isLoggedIn, secretWordRouter);
 
-app.use("/jobs", auth, jobsRouter);
+
+ //const { isLoggedIn } = require("./middleware/auth");
+ app.use("/lessons", isLoggedIn, lessonsRouter);
+ app.use("/secretWord", isLoggedIn, secretWordRouter);
+ app.use("/jobs", isLoggedIn, jobsRouter);
+
+
+//const lessonsRouter = require("./routes/lessons");
+//app.use("/lessons", auth, lessonsRouter);
+app.use("/lessons", isLoggedIn, lessonsRouter);
+
+app.use("/comments", require("./routes/comments"));
+
+//app.use("/jobs", auth, jobsRouter);
+
+//app.use("/jobs", auth, jobsRouter);
+
+
 
 
 app.use(helmet());
