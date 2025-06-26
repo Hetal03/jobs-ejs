@@ -7,4 +7,16 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+
+const isLoggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  req.flash("errors", "You must be logged in.");
+  res.redirect("/sessions/logon");
+};
+
+module.exports = {
+  authMiddleware,
+  isLoggedIn,
+};
