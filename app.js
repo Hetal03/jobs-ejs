@@ -1,4 +1,9 @@
 require("dotenv").config(); // Load environment variables
+
+let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV === "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const csrf = require("host-csrf");
@@ -72,7 +77,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
+     // mongoUrl: process.env.MONGO_URI,
+       mongoUrl: mongoURL,
       collectionName: "sessions",
     }),
     cookie: {
@@ -99,6 +105,20 @@ app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
+
+
+// Set content-type header manually for rendered pages and JSON
+app.use((req, res, next) => {
+  if (req.path === "/multiply") {
+    res.set("Content-Type", "application/json");
+  } else {
+    res.set("Content-Type", "text/html");
+  }
+  next();
+});
+
+
+
 
 // Routes
 app.get("/", (req, res) => {
@@ -134,6 +154,25 @@ app.use("/comments", require("./routes/comments"));
 app.use(helmet());
 app.use(xss());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+
+
+app.get("/multiply", (req, res) => {
+  const first = Number(req.query.first);
+  const second = Number(req.query.second);
+  let result = first * second;
+
+  if (Number.isNaN(result)) {
+    result = "NaN";
+  } else if (result == null) {
+    result = "null";
+  }
+
+  res.json({ result });
+});
+
+
+
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).send(`That page (${req.url}) was not found.`);
@@ -146,11 +185,42 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
+
+
+const port = process.env.PORT || 3000;
+
+/*let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV === "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
+*/
+const start = () => {
+  try {
+    require("./db/connect")(mongoURL); // no await here – synchronous version
+    return app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();
+
+// 🧪 Export app for testing
+module.exports = { app };
+
+/*
 const port = process.env.PORT || 3000;
 
 const start = async () => {
   try {
-    await require("./db/connect")(process.env.MONGO_URI);
+   // await require("./db/connect")(process.env.MONGO_URI);
+   let mongoURL = process.env.MONGO_URI;
+   if (process.env.NODE_ENV === "test") {
+   mongoURL = process.env.MONGO_URI_TEST;
+   }
+await require("./db/connect")(mongoURL);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
@@ -160,3 +230,4 @@ const start = async () => {
 };
 
 start();
+*/
